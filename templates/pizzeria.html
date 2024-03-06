@@ -1,0 +1,35 @@
+{%extends 'layout.html'%}
+{%block content%}
+
+<h3>Pizzeria</h3>
+{% from "_macros.html" import render_field%}
+
+
+<div class="container">
+    <div class="row">
+        <h3>Descripción Pedidos</h3>        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tamaño</th>
+                    <th>Ingredientes</th>
+                    <th>Num. Pizzas</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for pedi in pedidos%}
+                <tr>
+                    <td>{{pedi.tamaPizza}}</td>
+                    <td>{{pedi.ingredientesPizza}}</td>
+                    <td>{{pedi.numPizzas}}</td>
+                    <td>{{pedi.subtotal}}</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{%endblock%}

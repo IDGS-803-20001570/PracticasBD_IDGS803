@@ -8,6 +8,7 @@ from flask import g
 import forms
 from models import db
 from models import Empleados
+from models import PedidosPizza
 
 
 app = Flask(__name__)
@@ -82,6 +83,14 @@ def modificar():
         db.session.commit()
         return redirect('ABC_Completo')
     return render_template("modificar.html",form=empleados_form)
+
+@app.route("/pizzeria",methods=["GET","POST"])
+def pizzeria():
+    pizzeria_form=forms.PizzeriaForm(request.form)
+    pedidosPiza = PedidosPizza.query.all()
+
+
+    return render_template("pizzeria.html",pedidos=pedidosPiza)
 
 
 if __name__ == "__main__":
