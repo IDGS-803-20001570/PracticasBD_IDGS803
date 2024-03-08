@@ -1,6 +1,7 @@
 from wtforms import Form
-from wtforms import StringField,SelectField,RadioField,EmailField,IntegerField
+from wtforms import StringField,SelectField,RadioField,EmailField,IntegerField,DateField
 from wtforms import validators
+from wtforms.validators import DataRequired
 
 
 class EmpleadosForm(Form):
@@ -28,36 +29,35 @@ class EmpleadosForm(Form):
 class PizzeriaForm(Form):
     id = IntegerField('id')
     nombre= StringField('nombre',[
-        validators.DataRequired(message='el campo es requerido'),
-        validators.length(min=4,max=10,message='ingresa nombre valido')
+        validators.DataRequired(message='el campo es requerido')
     ])
     direccion= StringField('direccion',[
-        validators.DataRequired(message='el campo es requerido'),
-        validators.length(min=4,max=10,message='Ingresa una direccion valida')
+        validators.DataRequired(message='el campo es requerido')
     ])
     telefono= StringField('telefono',[
-        validators.DataRequired(message='el campo es requerido'),
-        validators.length(min=4,max=10,message='Ingresa un telefono valido')
+        validators.DataRequired(message='el campo es requerido')
     ])
-    numPizzas= IntegerField('Número Pizzas',[
-        validators.DataRequired(message='el campo es requerido'),
-        validators.length(min=1,message='Ingresa una cantidad valida'),
+    numPizzas = IntegerField('Número Pizzas', [
+        validators.DataRequired(message='El campo es requerido'),
+        validators.NumberRange(min=1, message='El número de pizzas no puede ser negativo')
     ])
     
     tamaPizza = RadioField('Tamaño Pizza', 
        choices=[
-            ('1','Chica $40'),
-            ('2','Mediana $80'),
-            ('2','Grande $120')
-            ], 
-        validators=[validators.InputRequired()])
+            ('40','Chica $40'),
+            ('80','Mediana $80'),
+            ('120','Grande $120')
+            ])
     ingredientesPizza = RadioField('Ingredientes Pizza', 
        choices=[
             ('1','Jamon $10'),
             ('2','Piña $10'),
-            ('2','Champiñones $120')
-            ], 
-        validators=[validators.InputRequired()])
+            ('3','Champiñones $10')
+            ])
+    numVenta = StringField('numVenta')
+    estatus= StringField('Estatus')
     subtotal= StringField('Subtotal')
     total= StringField('Total')
 
+class ConsultaPedidosForm(Form):
+    fecha_seleccionada = DateField('Seleccione una fecha', validators=[DataRequired()], format='%Y-%m-%d')

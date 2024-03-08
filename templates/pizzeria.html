@@ -1,35 +1,166 @@
 {%extends 'layout.html'%}
 {%block content%}
 
+<style>
+    li{
+        list-style: none;
+    }
+    #tarjetita{
+        background-color: antiquewhite;
+        border-radius: 20px;
+        padding-top: 2%;
+        padding-bottom: 2%;
+        padding-left: 4%;
+        width: 200px;
+    }
+</style>
+
 <h3>Pizzeria</h3>
 {% from "_macros.html" import render_field%}
+<div class="container">
+    <form name="registro" action="/pizzeria" id="registro" method="post">
+        <div style="display: inline-block;">
+            <div class="row control-group" style="display: inline-block; margin-right: 40px;">
+                <div class="form-group col-xs-12 float-label-form-group controls">
+                    {{ render_field(form.nombre, class="form-control") }}
+                </div>
+            </div>
+            <div class="row control-group" style="display: inline-block; margin-right: 40px;">
+                <div class="form-group col-xs-12 float-label-form-group controls">
+                    {{ render_field(form.direccion, class="form-control") }}
+                </div>
+            </div>
+            <div class="row control-group" style="display: inline-block; margin-right: 10px;">
+                <div class="form-group col-xs-12 float-label-form-group controls">
+                    {{ render_field(form.telefono, class="form-control") }}
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div style="overflow: hidden;">
+            <div id="tarjetita" style="float: left; margin-right: 40px;">
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 float-label-form-group controls">
+                        {{ render_field(form.tamaPizza, class_="radio", id="tamaPizza") }}
+                    </div>
+                </div>
+            </div>
+            <div id="tarjetita" style="float: left; margin-right: 40px;">
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 float-label-form-group controls">
+                        {{ render_field(form.ingredientesPizza, class_="radio", id="ingredientesPizza") }}
+                    </div>
+                </div>
+            </div>
+        </div>
 
+               
+        
+        <div class="row control-group">
+            <div class="form-group col-xs-12 float-label-form-group controls">
+                {{render_field(form.numPizzas,class="form-control")}}
+            </div>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
+        <input type="submit" class="btn btn-success" id="agregar" name="agregar" value="Agregar"/>
+    </form>
+</div>
 
 <div class="container">
     <div class="row">
-        <h3>Descripción Pedidos</h3>        
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Tamaño</th>
-                    <th>Ingredientes</th>
-                    <th>Num. Pizzas</th>
-                    <th>Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                {%for pedi in pedidos%}
-                <tr>
-                    <td>{{pedi.tamaPizza}}</td>
-                    <td>{{pedi.ingredientesPizza}}</td>
-                    <td>{{pedi.numPizzas}}</td>
-                    <td>{{pedi.subtotal}}</td>
-                </tr>
-                {%endfor%}
-            </tbody>
-        </table>
+        <h3>Descripción Pedidos</h3>
+        <form name="registro" action="/eliminarPedido" id="eliminarPedido" method="post">     
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Tamaño</th>
+                        <th>Ingredientes</th>
+                        <th>Num. Pizzas</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for pedi in pedidos%}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="pedidos_seleccionados" value="{{ pedi.id }}">
+                        </td>
+                        <td>{{pedi.tamaPizza}}</td>
+                        <td>{{pedi.ingredientesPizza}}</td>
+                        <td>{{pedi.numPizza}}</td>
+                        <td>{{pedi.subtotal}}</td>
+                        <td>
+                            <a href="modificarPedido?id={{pedi.id}}"
+                            class="btn btn-warning">Modificar</a>
+                        </td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+            <input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
+            <input type="submit" class="btn btn-danger" id="eliminar" name="eliminar" value="Eliminar"/>
+        </form> 
+        <form name="registro" action="/terminarPedido" id="terminarPedido" method="post" onsubmit="return confirmarTerminarPedido();">
+            <input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
+            <input type="submit" class="btn btn-succes" id="calcularTotal" name="calcularTotal" value="Terminar"/>
+        </form>
     </div>
+    
+</div>
+
+<div class="container">
+    <div class="row">
+        <h3>Descripción Pedidos</h3>
+        <form name="registro" action="/pedidosFecha" id="pedidosFecha" method="post">     
+            <div class="row control-group">
+                <div class="form-group col-xs-12 float-label-form-group controls">
+                    {{render_field(formF.fecha_seleccionada,class="form-control")}}
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for vent in ventasFecha%}
+                    <tr>
+                        <td>{{vent.nombre}}</td>
+                        <td>{{vent.total}}</td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+            <input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
+            <input type="submit" class="btn btn-danger" id="buscar" name="buscar" value="Buscar"/>
+        </form> 
+    </div>    
 </div>
 
 
+
+<script>
+    function confirmarTerminarPedido() {
+        var filas = document.querySelectorAll("table tbody tr");
+        var total = 0;
+
+        // Sumar los valores de la columna Subtotal (penúltima columna)
+        for (var i = 0; i < filas.length; i++) {
+            var penultimaCelda = filas[i].querySelector("td:nth-last-child(2)");
+            var subtotal = parseFloat(penultimaCelda.innerText);
+            if (!isNaN(subtotal)) {
+                total += subtotal;
+            }
+        }
+        if (confirm("¿Estás seguro de terminar el pedido?\nTotal: $" + total.toFixed(2))) {
+                return true; 
+            } else {
+                return false;  
+            }
+        }
+    </script>
 {%endblock%}
