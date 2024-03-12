@@ -6,7 +6,7 @@
         list-style: none;
     }
     #tarjetita{
-        background-color: antiquewhite;
+        background-color: rgba(165, 91, 235, 0.492);
         border-radius: 20px;
         padding-top: 2%;
         padding-bottom: 2%;
@@ -53,15 +53,19 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-               
+        </div>          
         
         <div class="row control-group">
             <div class="form-group col-xs-12 float-label-form-group controls">
                 {{render_field(form.numPizzas,class="form-control")}}
             </div>
         </div>
+        <div class="row control-group">
+            <div class="form-group col-xs-12 float-label-form-group controls">
+                {{render_field(form.fecha,class="form-control")}}
+            </div>
+        </div>
+
         <input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
         <input type="submit" class="btn btn-success" id="agregar" name="agregar" value="Agregar"/>
     </form>
@@ -119,6 +123,23 @@
                     {{render_field(formF.fecha_seleccionada,class="form-control")}}
                 </div>
             </div>
+            <div style="display: flex;">
+                <div class="row control-group">
+                    <div class="form-group col-xs-4 float-label-form-group controls">
+                        {{render_field(formF.dias_semana,class="form-control")}}
+                    </div>
+                </div>
+                <div class="row control-group">
+                    <div class="form-group col-xs-4 float-label-form-group controls">
+                        {{render_field(formF.meses,class="form-control")}}
+                    </div>
+                </div>
+                <div class="row control-group">
+                    <div class="form-group col-xs-4 float-label-form-group controls">
+                        {{render_field(formF.anios,class="form-control")}}
+                    </div>
+                </div>
+            </div>
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -162,5 +183,36 @@
                 return false;  
             }
         }
-    </script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+        var fechaSeleccionada = document.getElementById("fecha_seleccionada");
+        var diasSemana = document.getElementById("dias_semana");
+        var meses = document.getElementById("meses");
+        var anios = document.getElementById("anios");
+
+        fechaSeleccionada.addEventListener("change", function() {
+            diasSemana.disabled = true;
+            meses.disabled = true;
+            anios.disabled = true;
+        });
+
+        diasSemana.addEventListener("change", function() {
+            fechaSeleccionada.disabled = true;
+            meses.disabled = true;
+            anios.disabled = true;
+        });
+
+        meses.addEventListener("change", function() {
+            fechaSeleccionada.disabled = true;
+            diasSemana.disabled = true;
+            anios.disabled = true;
+        });
+
+        anios.addEventListener("change", function() {
+            fechaSeleccionada.disabled = true;
+            diasSemana.disabled = true;
+            meses.disabled = true;
+        });
+    });
+</script>
 {%endblock%}

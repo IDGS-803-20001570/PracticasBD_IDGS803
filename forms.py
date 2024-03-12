@@ -58,6 +58,40 @@ class PizzeriaForm(Form):
     estatus= StringField('Estatus')
     subtotal= StringField('Subtotal')
     total= StringField('Total')
+    fecha = DateField('Seleccione una fecha', validators=[DataRequired()], format='%Y-%m-%d')
 
 class ConsultaPedidosForm(Form):
-    fecha_seleccionada = DateField('Seleccione una fecha', validators=[DataRequired()], format='%Y-%m-%d')
+    fecha_seleccionada = DateField(format='%Y-%m-%d')
+
+    dias_semana = SelectField('Filtrar por día de la semana', 
+        choices=[('', 'Seleccione un día'), 
+                (0, 'Lunes'),
+                (1, 'Martes'),
+                (2, 'Miércoles'),
+                (3, 'Jueves'),
+                (4, 'Viernes'),
+                (5, 'Sábado'),
+                (6, 'Domingo')
+            ])
+    meses = SelectField('Filtrar por mes', 
+        choices=[('', 'Seleccione un mes'),
+                 (1, 'Enero'),
+                 (2, 'Febrero'),
+                 (3, 'Marzo'),
+                 (4, 'Abril'),
+                 (5, 'Mayo'),
+                 (6, 'Junio'),
+                 (7, 'Julio'),
+                 (8, 'Agosto'),
+                 (9, 'Septiembre'),
+                 (10, 'Octubre'),
+                 (11, 'Noviembre'),
+                 (12, 'Diciembre')])
+    anios = SelectField('Filtrar por año',
+         choices=[('', 'Seleccione un año'),
+                  (2020, '2020'),
+                  (2021, '2021'),
+                  (2022, '2022'),
+                  (2023, '2023'),
+                  (2024, '2024')
+                ])

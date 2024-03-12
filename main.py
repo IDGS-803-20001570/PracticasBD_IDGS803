@@ -1,5 +1,6 @@
 from flask import Flask,render_template,request,Response
 from sqlalchemy import update
+from sqlalchemy import extract
 from flask_wtf.csrf import CSRFProtect
 from flask import redirect
 from flask import flash
@@ -159,7 +160,8 @@ def pizzeria():
             subtotal=subtotalPizza,
             total=totalPizza,
             numeroVenta = numVenta,
-            estatus = "1"
+            estatus = "1",
+            fecha = pizzeria_form.fecha.data
         )
         db.session.add(nuevo_pedido)
         db.session.commit()
@@ -241,12 +243,14 @@ def terminarPedido():
         mismaVenta = False
         #Obtiene el nombre del cliente
         nombreCliente = db.session.query(PedidosPizza.nombre).filter(PedidosPizza.numeroVenta == max_id).first()[0]
+        fechaPedido = db.session.query(PedidosPizza.fecha).filter(PedidosPizza.numeroVenta == max_id).first()[0]
 
         #Ingresa una nueva venta
         nuevaVenta = VentasPizzas(
             nombre=nombreCliente,
             numeroVenta=max_id,
-            total=suma_subtotal
+            total=suma_subtotal,
+            create_date =fechaPedido
         )
         db.session.add(nuevaVenta)
         db.session.commit()
@@ -262,15 +266,69 @@ def terminarPedido():
 @app.route("/pedidosFecha", methods=["POST"])
 def pedidosFecha():
     formFecha = forms.ConsultaPedidosForm(request.form)
-    pizzeria_form=forms.PizzeriaForm(request.form)
+    pizzeria_form = forms.PizzeriaForm(request.form)
     fecha_seleccionada = formFecha.fecha_seleccionada.data
+    dia = formFecha.dias_semana.data
+    mes = formFecha.meses.data
+    anio = formFecha.anios.data
 
-    if not fecha_seleccionada: 
-        fecha_seleccionada = date.today()  
-    ventasFecha = db.session.query(
-    VentasPizzas.nombre,db.func.sum(VentasPizzas.total).label('total')).filter(VentasPizzas.create_date == fecha_seleccionada).group_by(VentasPizzas.nombre).all()
+    if not fecha_seleccionada and not dia and not mes and not anio:
+        fecha_seleccionada = date.today()
+    ventasFecha={}
+    if fecha_seleccionada:
+        # print("FECHA")
+        ventasFecha = db.session.query(
+            VentasPizzas.nombre,
+            db.func.sum(VentasPizzas.total).label('total')
+        ).filter(
+            VentasPizzas.create_date == fecha_seleccionada
+        ).group_by(
+            VentasPizzas.nombre
+        ).all()
+    elif dia:
+        dia_mysql = {
+            0: 2,  
+            1: 3,  
+            2: 4,  
+            3: 5,  
+            4: 6,  
+            5: 7,  
+            6: 1   
+        }
+        
+        dia_mysql = dia_mysql[int(dia)]
+
+        ventasFecha = db.session.query(
+            VentasPizzas.nombre,
+            db.func.sum(VentasPizzas.total).label('total')
+        ).filter(
+            db.func.DAYOFWEEK(VentasPizzas.create_date) == dia_mysql
+        ).group_by(
+            VentasPizzas.nombre
+        ).all()
+
+    elif mes:
+        print("mes")
+        ventasFecha = db.session.query(
+            VentasPizzas.nombre,
+            db.func.sum(VentasPizzas.total).label('total')
+        ).filter(
+            db.func.extract('month', VentasPizzas.create_date) == mes
+        ).group_by(
+            VentasPizzas.nombre
+        ).all()
+    elif anio:
+        print("año")
+        ventasFecha = db.session.query(
+            VentasPizzas.nombre,
+            db.func.sum(VentasPizzas.total).label('total')
+        ).filter(
+            db.func.extract('year', VentasPizzas.create_date) == anio
+        ).group_by(
+            VentasPizzas.nombre
+        ).all()
+
     return render_template("pizzeria.html",formF=formFecha, ventasFecha=ventasFecha, form=pizzeria_form)
-
 
 if __name__ == "__main__":
     csrf.init_app(app)
