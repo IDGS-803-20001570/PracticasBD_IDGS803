@@ -44,6 +44,13 @@
             </div>
         </div>
         
+        <div class="row control-group">
+            <div class="form-group col-xs-12 float-label-form-group controls">
+                {{render_field(form.fecha,class="form-control")}}
+            </div>
+        </div>
+
+
         <input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
         <input type="submit" class="btn btn-danger" id="modificar" name="modificar" value="Modificar"/>
         <a href="pizzeria" class="btn btn-warning">Cancelar</a>

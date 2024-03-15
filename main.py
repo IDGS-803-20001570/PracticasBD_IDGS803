@@ -217,7 +217,9 @@ def modificarPedido():
         pizzeria_form.direccion.data=pedidoPizza.direccion
         pizzeria_form.telefono.data=pedidoPizza.telefono
         pizzeria_form.tamaPizza.data=pedidoPizza.tamaPizza
-        # pizzeria_form.ingredientesPizza.data=pedidoPizza.ingredientesPizza
+        
+        fechaPedido = db.session.query(PedidosPizza.fecha).filter(PedidosPizza.numeroVenta == id).first()[0]
+        pizzeria_form.fecha.data = fechaPedido
 
         pizzeria_form.numPizzas.data=pedidoPizza.numPizza
 
@@ -263,6 +265,7 @@ def modificarPedido():
 
         pedidoPizza1.subtotal = subtotalPizza
         pedidoPizza1.total = totalPizza
+        pedidoPizza1.fecha = pizzeria_form.fecha.data
 
         db.session.add(pedidoPizza1)
         db.session.commit()
