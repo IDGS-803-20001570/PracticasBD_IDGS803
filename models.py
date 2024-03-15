@@ -36,4 +36,4 @@ class VentasPizzas(db.Model):
     nombre=db.Column(db.String(50))
     numeroVenta=db.Column(db.String(50))  
     total=db.Column(db.String(50))
-    create_date = db.Column(db.Date, default=datetime.date.today)
+    create_date = db.Column(db.Date)
